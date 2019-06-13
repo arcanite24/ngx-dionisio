@@ -1,142 +1,74 @@
-<p  align="center"><img  width=100%  src="https://i.imgur.com/t0YTAOZ.png"></p>
-
-  
+<p align="center"><img width=100% src="https://i.imgur.com/t0YTAOZ.png"></p>
 
 ![Contributions welcome](https://img.shields.io/badge/contributions-welcome-orange.svg)
-
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-  
+## Basic Overview
+Official Dionisio Angular Library heavily inspired by @angular/fire
 
-##  Basic Overview
-
-  
-
-Dionisio is a NodeJS backend framework for agile web development designed to be used in conjunction with ngx-prometheus. Dionisio provides powerful and simple tools for extremly fast scaffolding of web applications using the power of Angular
-
-  
-
-##  Features
-
-  
-
--  **Realtime Database Bindings** - Watch for changes on your data in realtime
-
--  **Chunk data flow** - Recieve large amounts of data splitted in small chanks seamlessly utilizing the power of Prometheus Observables
-
--  **Out-of-the-box Authentication** - Use many different providers to log users in
-
--  **Powerful queries based on GraphQL** - Only request what you need
-
--  **Agnostic ORM** - Integrate Dionisio with different databases using adapters
-
--  **Extension support** - Extend Dionisio to almost everything you can imagine
-
-  
-
-##  Installation
-
+## Installation
 ```bash
+npm i @epsidev/ngx-dionisio --save
+```
+Then add
+`HeliosModule` into your app.module.ts file
+```typescript
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { NgxDionisioModule } from '@epsidev/ngx-dionisio';
 
-npm i -g @epsidev/dionisio
+import { AppComponent } from './app.component';
 
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    NgxDionisioModule.forRoot({
+	    base_url: 'http://localhost:3000',
+    })
+  ],
+  providers: [ ],
+  bootstrap: [ AppComponent ]
+})
+export class AppModule { }
 ```
 
-  
+## Usage
+Import Dionisio Service into your component:
+```typescript
+import { Component } from '@angular/core';
+import { DionisioService } from '@epsidev/ngx-dionisio';
+import { Observable }  from  'rxjs';
 
-##  Usage
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
+})
+export class AppComponent {
 
-####  Generate a project with Dionisio CLI
+  public foos$: Observable<Foo[]> = this.dionisio.collection<Foo>('foo').valueChanges();
 
-```bash
+  constructor(
+    private dionisio: DionisioService,
+  ) {}
 
-dionisio new dionisio-demo
+}
 
+interface Foo {
+  id: number;
+  text: string;
+}
 ```
 
-  
-
-####  Start the server
-
-```bash
-
-dionisio start
-
+On your template use the $foos Observable with an async pipe
+```html
+<ul  class="list-group"  *ngIf="foos$ | async as foos">
+  <li *ngFor="let foo of foos">{{foo.text}}</li>
+</ul>
 ```
 
- ## Roadmap
-- [x] Collection Generator (Code Scaffold)
-- [x] Client Libraries (Angular)
-- [ ] Real-time support
-- [ ] Authentication
-- [ ] Extended collection features (Sum to parameter,  etc)
-- [ ] Database hooks
-- [ ] Remote functions
-
-##  Notes
-
-####  External libraries, tools and plugins
-
-Dionisio loves to embrace custom libraries and plugins built with by the community. Take a look at the page on [Extending Dionisio](https://epsidev.com.mx/dionisio/docs/extending) on EpsiDev site and start building your own custom tools for the framework. If you developed something and want us to hear about it send us an email to contacto@epsidev.com.mx
-
-  
-
-##  Contributing
-
-Please take a look at our [contributing](https://epsidev.com.mx/dionisio/contributing) guidelines if you're interested in helping!
-
-####  Changelog
-1. Removed support for Dionisio CLI, instead we are using npx with hygen
-
-
-Contributions welcome
-
-License
-
-Basic Overview
-Dionisio is a NodeJS backend framework for agile web development designed to be used in conjunction with ngx-prometheus. Dionisio provides powerful and simple tools for extremly fast scaffolding of web applications using the power of Angular
-
-Features
-Realtime Database Bindings - Watch for changes on your data in realtime
-
-Chunk data flow - Recieve large amounts of data splitted in small chanks seamlessly utilizing the power of Prometheus Observables
-
-Out-of-the-box Authentication - Use many different providers to log users in
-
-Powerful queries based on GraphQL - Only request what you need
-
-Agnostic ORM - Integrate Dionisio with different databases using adapters
-
-Extension support - Extend Dionisio to almost everything you can imagine
-
-Installation
-
-npm i -g @epsidev/dionisio
-
-Usage
-Generate a project with Dionisio CLI
-
-dionisio new dionisio-demo
-
-Start the server
-
-dionisio start
-
-Roadmap
- Collection Generator (Code Scaffold)
- Client Libraries (Angular)
- Real-time support
- Authentication
- Extended collection features (Sum to parameter, etc)
- Database hooks
- Remote functions
-Notes
-External libraries, tools and plugins
-Dionisio loves to embrace custom libraries and plugins built with by the community. Take a look at the page on Extending Dionisio on EpsiDev site and start building your own custom tools for the framework. If you developed something and want us to hear about it send us an email to contacto@epsidev.com.mx
-
-Contributing
-Please take a look at our contributing guidelines if you’re interested in helping!
-
-Changelog
-Removed support for Dionisio CLI, instead we are using npx with hygen
-Markdown 2223 bytes 291 words 89 lines Ln 89, Col 72 HTML 1372 characters 241 words 31 paragraphs
+## Docs
+[Official Docs](https://epsidev.com.mx/projects/ngx-dionisio)
