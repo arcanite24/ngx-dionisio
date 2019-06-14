@@ -50,6 +50,10 @@ export class DionisioService {
       delete: (key?) => this.http.delete<T>(`${this.base_url}/${path}/${id}${key ? '?key=' + key : ''}`).toPromise(),
       update: (payload, key?) => this.http.patch<Partial<T>>(`${this.base_url}/${path}/${id}${key ? '?key=' + key : ''}`, payload)
         .toPromise(),
+      modifyValue: (payload, key?) => this.http.patch<Partial<T>>(
+        `${this.base_url}/${path}/modify/${id}${key ? '?key=' + key : ''}`,
+        payload
+      ).toPromise(),
     };
   }
 
@@ -73,6 +77,7 @@ export class DionisioService {
 
           // console.log(change);
           // TODO: Unsubscribe from Socket
+          // TODO: Abstract this mutation to a reusable method
 
           // Handle collection changes
           if (change.type === DionisioChangeTypes.Create) {
@@ -88,6 +93,18 @@ export class DionisioService {
           if (change.type === DionisioChangeTypes.Update) {
             collection = collection.map(doc => doc['id'].toString() === change.payload.id.toString() ?
             Object.assign(doc, change.payload.body) as T : doc);
+            subscriber.next(collection);
+          }
+
+          if (change.type === DionisioChangeTypes.Modify) {
+            collection = collection.map(doc => {
+              if (doc['id'].toString() === change.payload.id.toString()) {
+                doc[change.payload.body.field] += change.payload.body.delta;
+                return doc;
+              } else {
+                return doc;
+              }
+            });
             subscriber.next(collection);
           }
 
@@ -114,7 +131,7 @@ export class DionisioService {
         // Subscribe to WebSocket
         this.socket.fromEvent(key).subscribe((change: DionisioChange) => {
 
-          console.log(change);
+          /* console.log(change); */
           // TODO: Unsubscribe from Socket
 
           // Handle collection changes
@@ -131,6 +148,18 @@ export class DionisioService {
           if (change.type === DionisioChangeTypes.Update) {
             collection = collection.map(doc => doc['id'].toString() === change.payload.id.toString() ?
               Object.assign(doc, change.payload.body) as T : doc);
+            subscriber.next(collection);
+          }
+
+          if (change.type === DionisioChangeTypes.Modify) {
+            collection = collection.map(doc => {
+              if (doc['id'].toString() === change.payload.id.toString()) {
+                doc[change.payload.body.field] += change.payload.body.delta;
+                return doc;
+              } else {
+                return doc;
+              }
+            });
             subscriber.next(collection);
           }
 

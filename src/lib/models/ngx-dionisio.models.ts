@@ -29,6 +29,7 @@ export interface DionisioDocument<T = any> {
   get: () => Promise<T>;
   delete: (key?: string) => Promise<any>;
   update: (payload: any, key?: string) => Promise<any>;
+  modifyValue: (payload: DionisioModifyValue, key?: string) => Promise<any>;
 }
 
 export interface DionisioChange {
@@ -37,8 +38,14 @@ export interface DionisioChange {
   payload: any;
 }
 
+export interface DionisioModifyValue {
+  field: string;
+  delta: number;
+}
+
 export enum DionisioChangeTypes {
   Create = 'CREATE',
   Delete = 'DELETE',
   Update = 'UPDATE',
+  Modify = 'MODIFY',
 }
